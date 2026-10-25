@@ -1,0 +1,46 @@
+{{define "content"}}{{$lib := .Lib}}{{with .Body}}
+<div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+  <div>
+    <h1 class="font-serif text-3xl font-semibold tracking-tight">{{.Heading}}</h1>
+    <p class="mt-1 text-sm text-stone-500">{{.Total}} {{if eq .Total 1}}book{{else}}books{{end}}</p>
+  </div>
+  <div class="flex gap-1 rounded-lg bg-stone-200/70 p-1 text-sm dark:bg-stone-800/70">
+    {{range .Sorts}}
+    <a href="{{.URL}}" class="rounded-md px-3 py-1 {{if .Active}}bg-white shadow-sm dark:bg-stone-700{{else}}text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100{{end}}">{{.Label}}</a>
+    {{end}}
+  </div>
+</div>
+
+{{if .Books}}
+<ul class="grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+  {{range .Books}}
+  <li>
+    <a href="/lib/{{$lib.Slug}}/books/{{.ID}}" class="group block">
+      <div class="aspect-[2/3] overflow-hidden rounded-md bg-stone-200 shadow-sm ring-1 ring-stone-900/5 transition group-hover:shadow-md dark:bg-stone-800">
+        {{if .HasCover}}
+        <img src="/lib/{{$lib.Slug}}/books/{{.ID}}/cover" alt="" loading="lazy" class="h-full w-full object-cover">
+        {{else}}
+        <div class="flex h-full flex-col justify-between bg-gradient-to-br from-amber-800 to-stone-800 p-3 text-amber-50">
+          <span class="line-clamp-5 font-serif text-sm leading-snug">{{.Title}}</span>
+          <span class="line-clamp-2 text-xs opacity-75">{{join .Authors ", "}}</span>
+        </div>
+        {{end}}
+      </div>
+      <p class="mt-2 line-clamp-2 text-sm font-medium leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-500">{{.Title}}</p>
+      <p class="line-clamp-1 text-xs text-stone-500">{{join .Authors ", "}}</p>
+    </a>
+  </li>
+  {{end}}
+</ul>
+{{else}}
+<p class="rounded-lg border border-dashed border-stone-300 p-12 text-center text-stone-500 dark:border-stone-700">{{.Empty}}</p>
+{{end}}
+
+{{if gt .Pages 1}}
+<nav class="mt-10 flex items-center justify-center gap-4 text-sm">
+  {{if .PrevURL}}<a href="{{.PrevURL}}" class="rounded-lg border border-stone-300 px-3 py-1.5 hover:bg-white dark:border-stone-700 dark:hover:bg-stone-900">← Previous</a>{{end}}
+  <span class="text-stone-500">Page {{.Page}} of {{.Pages}}</span>
+  {{if .NextURL}}<a href="{{.NextURL}}" class="rounded-lg border border-stone-300 px-3 py-1.5 hover:bg-white dark:border-stone-700 dark:hover:bg-stone-900">Next →</a>{{end}}
+</nav>
+{{end}}
+{{end}}{{end}}

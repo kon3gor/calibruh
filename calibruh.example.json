@@ -1,0 +1,13 @@
+{
+  "addr": ":8080",
+  "calibredb": "calibredb",
+  "allow_duplicates": false,
+  "max_upload_mb": 500,
+  "username": "me",
+  "password": "set CALIBRUH_PASSWORD instead of putting it here",
+  "libraries_dir": "/data",
+  "rescan_seconds": 30,
+  "libraries": [
+    { "name": "Shared", "path": "/mnt/nas/shared-calibre" }
+  ]
+}

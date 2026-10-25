@@ -1,0 +1,58 @@
+{{define "content"}}{{$lib := .Lib}}{{with .Body}}
+<div class="mx-auto max-w-2xl">
+  <h1 class="font-serif text-3xl font-semibold tracking-tight">Upload to {{$lib.Name}}</h1>
+  <p class="mt-1 text-sm text-stone-500">Books are added with calibredb, so metadata and covers are read from the files. Up to {{.MaxMB}} MB per upload.</p>
+
+  {{if .Error}}
+  <p class="mt-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800 ring-1 ring-red-200 dark:bg-red-950 dark:text-red-200 dark:ring-red-900">{{.Error}}</p>
+  {{end}}
+
+  {{if .Results}}
+  <ul class="mt-6 divide-y divide-stone-200 rounded-lg bg-white ring-1 ring-stone-200 dark:divide-stone-800 dark:bg-stone-900 dark:ring-stone-800">
+    {{range .Results}}
+    <li class="flex items-start gap-3 px-4 py-3 text-sm">
+      {{if eq .Status "added"}}<span class="mt-0.5 rounded bg-emerald-100 px-1.5 text-xs font-medium text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">added</span>
+      {{else if eq .Status "duplicate"}}<span class="mt-0.5 rounded bg-amber-100 px-1.5 text-xs font-medium text-amber-800 dark:bg-amber-950 dark:text-amber-300">skipped</span>
+      {{else}}<span class="mt-0.5 rounded bg-red-100 px-1.5 text-xs font-medium text-red-800 dark:bg-red-950 dark:text-red-300">failed</span>{{end}}
+      <div class="min-w-0">
+        {{if .BookID}}<a href="/lib/{{$lib.Slug}}/books/{{.BookID}}" class="break-all font-medium hover:text-amber-700">{{.File}}</a>
+        {{else}}<p class="break-all font-medium">{{.File}}</p>{{end}}
+        {{with .Message}}<p class="text-stone-500">{{.}}</p>{{end}}
+      </div>
+    </li>
+    {{end}}
+  </ul>
+  {{end}}
+
+  <form id="upload" action="/lib/{{$lib.Slug}}/upload" method="post" enctype="multipart/form-data" class="mt-6">
+    <label id="drop" class="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-stone-300 bg-white px-6 py-14 text-center transition hover:border-amber-600 dark:border-stone-700 dark:bg-stone-900">
+      <span class="font-medium">Drop books here or click to choose</span>
+      <span id="picked" class="mt-1 text-sm text-stone-500">EPUB, PDF, MOBI, AZW3, CBZ, FB2 and anything else calibre imports</span>
+      <input id="files" type="file" name="files" multiple accept="{{.Accept}}" class="sr-only">
+    </label>
+    <button id="submit" type="submit" disabled class="mt-4 w-full rounded-lg bg-amber-700 px-4 py-2.5 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-40">Upload</button>
+  </form>
+</div>
+<script>
+  const drop = document.getElementById("drop"), input = document.getElementById("files"),
+    picked = document.getElementById("picked"), submit = document.getElementById("submit");
+  const update = () => {
+    const n = input.files.length;
+    submit.disabled = n === 0;
+    if (n) picked.textContent = n === 1 ? input.files[0].name : n + " files selected";
+  };
+  input.addEventListener("change", update);
+  drop.addEventListener("dragover", e => { e.preventDefault(); drop.classList.add("border-amber-600"); });
+  drop.addEventListener("dragleave", () => drop.classList.remove("border-amber-600"));
+  drop.addEventListener("drop", e => {
+    e.preventDefault();
+    drop.classList.remove("border-amber-600");
+    input.files = e.dataTransfer.files;
+    update();
+  });
+  document.getElementById("upload").addEventListener("submit", () => {
+    submit.disabled = true;
+    submit.textContent = "Uploading… calibredb takes a few seconds per book";
+  });
+</script>
+{{end}}{{end}}

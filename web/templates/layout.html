@@ -1,0 +1,64 @@
+{{define "layout"}}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{if .Title}}{{.Title}} · {{end}}calibruh</title>
+<script src="/static/tailwind.js"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-serif: ui-serif, "Iowan Old Style", Georgia, serif;
+  }
+</style>
+</head>
+<body class="min-h-screen bg-stone-50 font-sans text-stone-900 antialiased dark:bg-stone-950 dark:text-stone-100">
+<header class="sticky top-0 z-10 border-b border-stone-200 bg-stone-50/90 backdrop-blur dark:border-stone-800 dark:bg-stone-950/90">
+  <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3">
+    <a href="/" class="font-serif text-xl font-semibold tracking-tight">calibruh</a>
+    {{with .Lib}}
+    <details class="group relative" data-dropdown>
+      <summary class="flex cursor-pointer list-none items-center gap-2 rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium hover:border-stone-400 dark:border-stone-700 dark:bg-stone-900 dark:hover:border-stone-600 [&::-webkit-details-marker]:hidden">
+        <span class="max-w-48 truncate">{{.Name}}</span>
+        <svg class="h-4 w-4 text-stone-500 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06z" clip-rule="evenodd"/></svg>
+      </summary>
+      <div class="absolute left-0 z-20 mt-2 max-h-96 w-64 overflow-y-auto rounded-lg border border-stone-200 bg-white py-1 shadow-lg dark:border-stone-800 dark:bg-stone-900">
+        <p class="px-3 pb-1 pt-2 text-xs font-medium uppercase tracking-wide text-stone-500">Libraries</p>
+        {{range $.Libraries}}
+        {{/* Stay on the same section (authors, upload, …) when switching. */}}
+        <a href="/lib/{{.Slug}}/{{if ne $.Nav "books"}}{{$.Nav}}{{end}}"
+          class="flex items-center justify-between gap-2 px-3 py-2 text-sm hover:bg-stone-100 dark:hover:bg-stone-800 {{if eq .Slug $.Lib.Slug}}font-medium text-amber-700 dark:text-amber-500{{end}}">
+          <span class="truncate">{{.Name}}</span>
+          {{if eq .Slug $.Lib.Slug}}<svg class="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-8 8a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4L8 12.58l7.3-7.3a1 1 0 0 1 1.4 0z" clip-rule="evenodd"/></svg>{{end}}
+        </a>
+        {{end}}
+      </div>
+    </details>
+    {{end}}
+    {{with .Lib}}
+    <nav class="flex gap-4 text-sm">
+      <a href="/lib/{{.Slug}}/" class="{{if eq $.Nav "books"}}font-medium{{else}}text-stone-500 hover:text-stone-900 dark:hover:text-stone-100{{end}}">Books</a>
+      <a href="/lib/{{.Slug}}/authors" class="{{if eq $.Nav "authors"}}font-medium{{else}}text-stone-500 hover:text-stone-900 dark:hover:text-stone-100{{end}}">Authors</a>
+      <a href="/lib/{{.Slug}}/series" class="{{if eq $.Nav "series"}}font-medium{{else}}text-stone-500 hover:text-stone-900 dark:hover:text-stone-100{{end}}">Series</a>
+      <a href="/lib/{{.Slug}}/tags" class="{{if eq $.Nav "tags"}}font-medium{{else}}text-stone-500 hover:text-stone-900 dark:hover:text-stone-100{{end}}">Tags</a>
+    </nav>
+    <form action="/lib/{{.Slug}}/" method="get" class="ml-auto flex min-w-48 flex-1 gap-2 sm:max-w-xs">
+      <input type="search" name="q" value="{{$.Search}}" placeholder="Search {{.Name}}"
+        class="w-full rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-amber-600 focus:ring-2 focus:ring-amber-600/20 dark:border-stone-700 dark:bg-stone-900">
+    </form>
+    <a href="/lib/{{.Slug}}/upload" class="rounded-lg bg-amber-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-800">Upload</a>
+    {{end}}
+  </div>
+</header>
+<main class="mx-auto max-w-6xl px-4 py-8">
+{{template "content" .}}
+</main>
+<script>
+  const closeDropdowns = except => document.querySelectorAll("details[data-dropdown][open]").forEach(d => {
+    if (!d.contains(except)) d.removeAttribute("open");
+  });
+  document.addEventListener("click", e => closeDropdowns(e.target));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeDropdowns(null); });
+</script>
+</body>
+</html>{{end}}

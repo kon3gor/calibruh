@@ -1,0 +1,17 @@
+{{define "content"}}{{$lib := .Lib}}{{with .Body}}
+<h1 class="mb-6 font-serif text-3xl font-semibold tracking-tight">{{.Category.Label}}</h1>
+{{if .Items}}
+<ul class="columns-1 gap-8 sm:columns-2 lg:columns-3">
+  {{range .Items}}
+  <li class="break-inside-avoid">
+    <a href="/lib/{{$lib.Slug}}/?{{$.Body.Category.Param}}={{.ID}}" class="flex items-baseline justify-between gap-3 rounded-md px-2 py-1.5 hover:bg-stone-200/60 dark:hover:bg-stone-800/60">
+      <span class="truncate">{{.Name}}</span>
+      <span class="shrink-0 text-xs tabular-nums text-stone-500">{{.Count}}</span>
+    </a>
+  </li>
+  {{end}}
+</ul>
+{{else}}
+<p class="rounded-lg border border-dashed border-stone-300 p-12 text-center text-stone-500 dark:border-stone-700">Nothing here yet.</p>
+{{end}}
+{{end}}{{end}}

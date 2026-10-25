@@ -1,0 +1,59 @@
+{{define "content"}}{{$lib := .Lib}}{{with .Body}}
+<div class="grid gap-10 md:grid-cols-[16rem_1fr]">
+  <div>
+    <div class="aspect-[2/3] overflow-hidden rounded-md bg-stone-200 shadow-md ring-1 ring-stone-900/5 dark:bg-stone-800">
+      {{if .HasCover}}
+      <img src="/lib/{{$lib.Slug}}/books/{{.ID}}/cover" alt="Cover of {{.Title}}" class="h-full w-full object-cover">
+      {{else}}
+      <div class="flex h-full flex-col justify-between bg-gradient-to-br from-amber-800 to-stone-800 p-5 text-amber-50">
+        <span class="font-serif text-xl leading-snug">{{.Title}}</span>
+        <span class="text-sm opacity-75">{{join .Authors ", "}}</span>
+      </div>
+      {{end}}
+    </div>
+    {{if .Files}}
+    <div class="mt-6 space-y-2">
+      {{range .Files}}
+      <a href="/lib/{{$lib.Slug}}/books/{{$.Body.ID}}/file/{{lower .Format}}"
+        class="flex items-center justify-between rounded-lg bg-amber-700 px-4 py-2 text-sm font-medium text-white hover:bg-amber-800">
+        <span>Download {{.Format}}</span><span class="text-xs font-normal opacity-80">{{size .Size}}</span>
+      </a>
+      {{end}}
+    </div>
+    {{end}}
+  </div>
+
+  <div class="min-w-0">
+    <h1 class="font-serif text-4xl font-semibold leading-tight tracking-tight">{{.Title}}</h1>
+    {{if .AuthorRefs}}
+    <p class="mt-2 text-lg text-stone-600 dark:text-stone-400">by
+      {{range $i, $a := .AuthorRefs}}{{if $i}}, {{end}}<a href="/lib/{{$lib.Slug}}/?author={{$a.ID}}" class="text-stone-900 underline decoration-stone-300 underline-offset-4 hover:decoration-amber-600 dark:text-stone-100 dark:decoration-stone-600">{{$a.Name}}</a>{{end}}
+    </p>
+    {{end}}
+    {{with .SeriesRef}}
+    <p class="mt-1 text-stone-600 dark:text-stone-400">Book {{seriesIndex $.Body.SeriesIndex}} of
+      <a href="/lib/{{$lib.Slug}}/?series={{.ID}}" class="underline decoration-stone-300 underline-offset-4 hover:decoration-amber-600 dark:decoration-stone-600">{{.Name}}</a></p>
+    {{end}}
+
+    {{if .Tags}}
+    <div class="mt-5 flex flex-wrap gap-2">
+      {{range .Tags}}
+      <a href="/lib/{{$lib.Slug}}/?tag={{.ID}}" class="rounded-full bg-stone-200 px-3 py-0.5 text-xs text-stone-700 hover:bg-amber-100 hover:text-amber-900 dark:bg-stone-800 dark:text-stone-300 dark:hover:bg-amber-950 dark:hover:text-amber-200">{{.Name}}</a>
+      {{end}}
+    </div>
+    {{end}}
+
+    {{if .Description}}
+    <div class="mt-8 max-w-prose whitespace-pre-line font-serif text-[1.05rem] leading-relaxed text-stone-800 dark:text-stone-200">{{.Description}}</div>
+    {{end}}
+
+    <dl class="mt-8 grid max-w-prose grid-cols-[auto_1fr] gap-x-6 gap-y-2 border-t border-stone-200 pt-6 text-sm dark:border-stone-800">
+      {{with .Publisher}}<dt class="text-stone-500">Publisher</dt><dd>{{.}}</dd>{{end}}
+      {{with date .Published}}<dt class="text-stone-500">Published</dt><dd>{{.}}</dd>{{end}}
+      {{with .Languages}}<dt class="text-stone-500">Language</dt><dd>{{join . ", "}}</dd>{{end}}
+      {{with date .Added}}<dt class="text-stone-500">Added</dt><dd>{{.}}</dd>{{end}}
+      {{range .Identifiers}}<dt class="text-stone-500">{{upper .Type}}</dt><dd class="break-all">{{.Value}}</dd>{{end}}
+    </dl>
+  </div>
+</div>
+{{end}}{{end}}

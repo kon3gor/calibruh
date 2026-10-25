@@ -1,0 +1,11 @@
+{{define "content"}}
+<div class="mx-auto max-w-lg rounded-xl border border-dashed border-stone-300 p-12 text-center dark:border-stone-700">
+  <h1 class="font-serif text-2xl font-semibold">No libraries yet</h1>
+  {{if .Body}}
+  <p class="mt-3 text-stone-500">Put a Calibre library folder (one containing <code class="rounded bg-stone-200 px-1 text-sm dark:bg-stone-800">metadata.db</code>) into
+    <code class="rounded bg-stone-200 px-1 text-sm dark:bg-stone-800">{{.Body}}</code>. It shows up here within a minute, no restart needed.</p>
+  {{else}}
+  <p class="mt-3 text-stone-500">None of the configured libraries could be served.</p>
+  {{end}}
+</div>
+{{end}}
